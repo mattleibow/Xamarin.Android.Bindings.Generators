@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="GenerateParameterNames"
+             AssemblyFile="$(MSBuildThisFileDirectory)ParameterNameGeneratorTask.dll"
+             Architecture="x86" />
+
+  <Target Name="GenerateParameterNames"
+          BeforeTargets="GenerateBindings"
+          DependsOnTargets="ExportJarToXml">
+          
+    <PropertyGroup>
+      <GeneratedParameterNamesFile Condition=" '$(GeneratedParameterNamesFile)' == '' ">$(IntermediateOutputPath)Metadata.GeneratedParameterNames.xml</GeneratedParameterNamesFile>
+    </PropertyGroup>
+    <GenerateParameterNames SourceJars="@(EmbeddedJar);@(InputJar)"
+                            TransformFiles="@(TransformFile)"
+                            GeneratedFile="$(GeneratedParameterNamesFile)"
+                            ApiOutputFile="$(ApiOutputFile)"
+                            MSBuildArchitecture="x86" />
+    <ItemGroup>
+      <!-- make sure the generated transform is first so the user can override values -->
+      <TempoaryTransformFile Include="@(TransformFile)" />
+      <TransformFile Remove="@(TransformFile)" />
+      <TransformFile Include="$(GeneratedParameterNamesFile)" />
+      <TransformFile Include="@(TempoaryTransformFile)" />
+    </ItemGroup>
+    
+  </Target>
+
+</Project>
