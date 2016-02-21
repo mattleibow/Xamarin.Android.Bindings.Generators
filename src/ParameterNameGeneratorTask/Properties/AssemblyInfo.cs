@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ParameterNameGeneratorTask")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Xamarin.Android Binding Generators")]
+[assembly: AssemblyDescription("A MSBuild Task to make Xamarin.Android binding projects easier.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany(".NET Development Addict")]
 [assembly: AssemblyProduct("ParameterNameGeneratorTask")]
-[assembly: AssemblyCopyright("Copyright © .NET Development Addict 2016")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © .NET Development Addict <year>")]
+[assembly: AssemblyTrademark("Copyright © .NET Development Addict <year>")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -33,3 +33,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersion("1.0.0.0")]

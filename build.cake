@@ -32,18 +32,20 @@ Task("Build")
 {
     NuGetRestore(solutionFile);
     
-    CreateAssemblyInfo(projectDir + File("Properties/AssemblyInfo.cs"), new AssemblyInfoSettings {
+    var infoFile = projectDir + File("Properties/AssemblyInfo.cs");
+    var info = ParseAssemblyInfo(infoFile);
+    CreateAssemblyInfo(infoFile, new AssemblyInfoSettings {
         // assembly
-        ComVisible = false,
+        ComVisible = info.ComVisible,
         Configuration = configuration,
-        Guid = "2fb62f0a-fd1b-4662-a43b-2873530ef3b6",
-        Product = "ParameterNameGeneratorTask",
+        Guid = info.Guid,
+        Product = info.Product,
         // descriptions
-        Title = "Xamarin.Android Binding Generators",
-        Description = "A MSBuild Task to make Xamarin.Android binding projects easier.",
-        Company = ".NET Development Addict",
-        Copyright = "Copyright © .NET Development Addict 2016",
-        Trademark = "Copyright © .NET Development Addict 2016",
+        Title = info.Title,
+        Description = info.Description,
+        Company = info.Company,
+        Copyright = info.Copyright.Replace("<year>", DateTime.UtcNow.Year.ToString()),
+        Trademark = info.Trademark.Replace("<year>", DateTime.UtcNow.Year.ToString()),
         //versions
         Version = libraryversion,
         FileVersion = libraryversion,
