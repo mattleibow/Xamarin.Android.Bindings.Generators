@@ -102,6 +102,11 @@ Task("Default")
     .IsDependentOn("Build")
     .IsDependentOn("Tests");
 
+Task("CI")
+    .IsDependentOn("Build")
+    .IsDependentOn("Package")
+    .IsDependentOn("Tests");
+
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
 //////////////////////////////////////////////////////////////////////
