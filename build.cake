@@ -4,6 +4,7 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
+var libraryversion = Argument("libraryversion", "1.0.0.0");
 
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
@@ -11,7 +12,8 @@ var configuration = Argument("configuration", "Release");
 
 // Define paths
 var outputDir = Directory("./output/");
-var buildDir = Directory("./src/ParameterNameGeneratorTask/bin/") + Directory(configuration);
+var projectDir = Directory("./src/ParameterNameGeneratorTask/");
+var buildDir = projectDir + Directory("bin/") + Directory(configuration);
 var solutionFile = File("./src/Xamarin.Android.Bindings.Generators.sln");
 var testsSolutionFile = File("./src/Xamarin.Android.Bindings.Generators.Tests.sln");
 
@@ -29,6 +31,24 @@ Task("Build")
     .Does(() =>
 {
     NuGetRestore(solutionFile);
+    
+    CreateAssemblyInfo(projectDir + File("Properties/AssemblyInfo.cs"), new AssemblyInfoSettings {
+        // assembly
+        ComVisible = false,
+        Configuration = configuration,
+        Guid = "2fb62f0a-fd1b-4662-a43b-2873530ef3b6",
+        Product = "ParameterNameGeneratorTask",
+        // descriptions
+        Title = "Xamarin.Android Binding Generators",
+        Description = "A MSBuild Task to make Xamarin.Android binding projects easier.",
+        Company = ".NET Development Addict",
+        Copyright = "Copyright © .NET Development Addict 2016",
+        Trademark = "Copyright © .NET Development Addict 2016",
+        //versions
+        Version = libraryversion,
+        FileVersion = libraryversion,
+        InformationalVersion = libraryversion,
+    });
     
     DotNetBuild(solutionFile, config => {
         config.Configuration = configuration;
@@ -51,6 +71,7 @@ Task("Package")
     NuGetPack("./nuget/Xamarin.Android.Bindings.Generators.nuspec", new NuGetPackSettings {
         BasePath = "./",
         OutputDirectory = "./output/",
+        Version = libraryversion
     });
 });
 
