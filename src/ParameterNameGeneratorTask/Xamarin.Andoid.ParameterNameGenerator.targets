@@ -11,12 +11,16 @@
           
     <PropertyGroup>
       <GeneratedParameterNamesFile Condition=" '$(GeneratedParameterNamesFile)' == '' ">$(IntermediateOutputPath)Metadata.GeneratedParameterNames.xml</GeneratedParameterNamesFile>
+      <ForceMeaningfulParameterNames Condition=" '$(ForceMeaningfulParameterNames)' == '' ">true</ForceMeaningfulParameterNames>
     </PropertyGroup>
+    
     <GenerateParameterNames SourceJars="@(EmbeddedJar);@(InputJar)"
                             TransformFiles="@(TransformFile)"
                             GeneratedFile="$(GeneratedParameterNamesFile)"
                             ApiOutputFile="$(ApiOutputFile)"
+                            ForceMeaningfulParameterNames="$(ForceMeaningfulParameterNames)"
                             MSBuildArchitecture="x86" />
+                            
     <ItemGroup>
       <!-- make sure the generated transform is first so the user can override values -->
       <TempoaryTransformFile Include="@(TransformFile)" />

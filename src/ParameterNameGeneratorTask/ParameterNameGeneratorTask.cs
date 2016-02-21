@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Xml.XPath;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Xamarin.Android.Tools.Bytecode;
+using System.Text.RegularExpressions;
 
 namespace Tasks
 {
@@ -21,6 +23,8 @@ namespace Tasks
 		public ITaskItem GeneratedFile { get; set; }
 
 		public ITaskItem ApiOutputFile { get; set; }
+
+		public bool ForceMeaningfulParameterNames { get; set; }
 
 		public override bool Execute()
 		{
@@ -56,7 +60,7 @@ namespace Tasks
 			metadataElement = TransformXml(metadataElement);
 
 			var packages = JavaPackage.Parse(metadataElement);
-			var xParameters = packages.SelectMany(p => p.ToXElement());
+			var xParameters = packages.SelectMany(p => p.ToXElement(ForceMeaningfulParameterNames));
 
 			// create the new xml document
 			var xDoc = new XDocument(
@@ -153,7 +157,7 @@ namespace Tasks
 					.ToArray();
 			}
 
-			public IEnumerable<XNode> ToXElement()
+			public IEnumerable<XNode> ToXElement(bool forceMeaningfulParameterNames)
 			{
 				const string packagePathTemplate = "/api/package[@name='{0}']";
 				const string typePathTemplate = "/{0}[@name='{1}']";
@@ -174,7 +178,8 @@ namespace Tasks
 						var typePath = packagePath + string.Format(typePathTemplate, type.Kind, type.Name);
 						foreach (var member in type.Members.Where(m => m.IsVisible && m.HasParameters))
 						{
-							member.EnsueValidAndUnique();
+							// make sure the parameter names are valid and meaningful
+							member.EnsueValidAndUnique(forceMeaningfulParameterNames);
 
 							// build the member selection path bit of the parameter
 							var paramArray = new string[member.ParameterCount];
@@ -222,6 +227,14 @@ namespace Tasks
 
 		private class JavaMember
 		{
+			private static Regex genericTemplate = new Regex(
+				@"<.{0,}>",
+				RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+			private static Regex alphanumericTemplate = new Regex(
+				@"[^\w_]",
+				RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
 			public string Name { get; set; }
 			public string Kind { get; set; }
 			public string Visibility { get; set; }
@@ -232,13 +245,38 @@ namespace Tasks
 			public int ParameterCount => Parameters.Length;
 			public bool HasParameters => Parameters != null && Parameters.Length > 0;
 
-			public void EnsueValidAndUnique()
+			public void EnsueValidAndUnique(bool forceMeaningfulParameterNames)
 			{
 				var addedParamNames = new List<string>();
 				for (int idx = 0; idx < ParameterCount; idx++)
 				{
 					var parameter = Parameters[idx];
 					var managedName = parameter.Name;
+
+					if (forceMeaningfulParameterNames)
+					{
+						// if the parameter name is generated, try harder
+						var isGenerated =
+							managedName.StartsWith("p") &&
+							managedName.Length > 1 &&
+							char.IsDigit(managedName[1]);
+						if (isGenerated)
+						{
+							// remove generics part (eg: SomeType<T>)
+							var type = genericTemplate.Replace(parameter.Type, string.Empty);
+							// get the type as the parameter name
+							type = type.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "param";
+							// change arrays
+							if (type.EndsWith("[]"))
+							{
+								type = type.Replace("[]", "Array");
+							}
+							// remove invalid characters
+							type = alphanumericTemplate.Replace(type, string.Empty);
+							// make sure it is camel case
+							managedName = type[0].ToString().ToLower() + type.Substring(1);
+						}
+					}
 
 					// fix any bad C# parameter names
 					if (!managedName.StartsWith("@"))
