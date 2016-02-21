@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParameterNameGeneratorTask.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParameterNameGeneratorTask.Tests.AndroidJar", "ParameterNameGeneratorTask.Tests.AndroidJar\ParameterNameGeneratorTask.Tests.AndroidJar.csproj", "{79515441-B615-44CF-BD35-C4CDE883DDFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParameterNameGeneratorTask.Tests.AndroidAar", "ParameterNameGeneratorTask.Tests.AndroidAar\ParameterNameGeneratorTask.Tests.AndroidAar.csproj", "{79515441-B615-44CF-BD35-C4CDE883DDFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{79515441-B615-44CF-BD35-C4CDE883DDFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79515441-B615-44CF-BD35-C4CDE883DDFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79515441-B615-44CF-BD35-C4CDE883DDFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79515441-B615-44CF-BD35-C4CDE883DDFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79515441-B615-44CF-BD35-C4CDE883DDFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79515441-B615-44CF-BD35-C4CDE883DDFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79515441-B615-44CF-BD35-C4CDE883DDFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

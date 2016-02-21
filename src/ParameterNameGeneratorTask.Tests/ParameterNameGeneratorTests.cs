@@ -9,24 +9,22 @@ namespace ParameterNameGeneratorTask.Tests
 	[TestFixture]
 	public sealed class ParameterNameGeneratorTests
 	{
-		private const string BindingDllName = "ParameterNameGeneratorTask.Tests.AndroidJar.dll";
+		private const string JarBindingDllName = "ParameterNameGeneratorTask.Tests.AndroidJar.dll";
+		private const string AarBindingDllName = "ParameterNameGeneratorTask.Tests.AndroidAar.dll";
 
-		private static string BindingDllPath
+		private static string GetBindingDllPath(string dll)
 		{
-			get
-			{
-				var assembly = typeof(ParameterNameGeneratorTests).Assembly.Location;
-				var dir = Path.GetDirectoryName(assembly);
-				var path = Path.Combine(dir, BindingDllName);
-				return path;
-			}
+			var assembly = typeof(ParameterNameGeneratorTests).Assembly.Location;
+			var dir = Path.GetDirectoryName(assembly);
+			var path = Path.Combine(dir, dll);
+			return path;
 		}
 
 		[Test]
-		public void BoundMethodsShouldHaveParameterNames()
+		public void BoundJarMethodsShouldHaveParameterNames()
 		{
 			// Given
-			var assembly = AssemblyDefinition.ReadAssembly(BindingDllPath);
+			var assembly = AssemblyDefinition.ReadAssembly(GetBindingDllPath(JarBindingDllName));
 			var type = assembly.MainModule.GetType("ParameterNameGeneratorTask.Tests.AndroidJar.OkBuffer");
 
 			// When
@@ -43,6 +41,24 @@ namespace ParameterNameGeneratorTask.Tests
 			Assert.AreEqual("sink", parameters[0].Name);
 			Assert.AreEqual("offset", parameters[1].Name);
 			Assert.AreEqual("byteCount", parameters[2].Name);
+		}
+
+		[Test]
+		public void BoundAarMethodsShouldHaveParameterNames()
+		{
+			// Given
+			var assembly = AssemblyDefinition.ReadAssembly(GetBindingDllPath(AarBindingDllName));
+			var type = assembly.MainModule.GetType("ParameterNameGeneratorTask.Tests.AndroidAar.CalendarCellView");
+
+			// When
+			var method = type.Methods
+				.Where(m => m.Name == "SetHighlighted" && m.Parameters.Count == 1)
+				.Where(m => m.Parameters[0].ParameterType.FullName == typeof(bool).FullName)
+				.Single();
+			var parameters = method.Parameters;
+
+			// Then
+			Assert.AreEqual("highlighted", parameters[0].Name);
 		}
 	}
 }

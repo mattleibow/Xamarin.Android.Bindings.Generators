@@ -67,6 +67,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ParameterNameGeneratorTask.Tests.AndroidAar\ParameterNameGeneratorTask.Tests.AndroidAar.csproj">
+      <Project>{79515441-b615-44cf-bd35-c4cde883ddfe}</Project>
+      <Name>ParameterNameGeneratorTask.Tests.AndroidAar</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ParameterNameGeneratorTask.Tests.AndroidJar\ParameterNameGeneratorTask.Tests.AndroidJar.csproj">
       <Project>{79515441-b615-44cf-bd35-c4cde883ddfd}</Project>
       <Name>ParameterNameGeneratorTask.Tests.AndroidJar</Name>
