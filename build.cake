@@ -10,7 +10,8 @@ var configuration = Argument("configuration", "Release");
 //////////////////////////////////////////////////////////////////////
 
 // Define paths
-var buildDir = Directory("./src/ParameterNameGeneratorTask/bin") + Directory(configuration);
+var outputDir = Directory("./output/");
+var buildDir = Directory("./src/ParameterNameGeneratorTask/bin/") + Directory(configuration);
 var solutionFile = File("./src/Xamarin.Android.Bindings.Generators.sln");
 var testsSolutionFile = File("./src/Xamarin.Android.Bindings.Generators.Tests.sln");
 
@@ -32,12 +33,25 @@ Task("Build")
     DotNetBuild(solutionFile, config => {
         config.Configuration = configuration;
     });
+    
+    if (!DirectoryExists(outputDir)) {
+        CreateDirectory(outputDir);
+    }
+    
+    CopyFileToDirectory(buildDir + File("ParameterNameGeneratorTask.dll"), outputDir);
+    CopyFileToDirectory(buildDir + File("Xamarin.Android.Tools.Bytecode.dll"), outputDir);
+    CopyFileToDirectory(buildDir + File("Ionic.Zip.dll"), outputDir);
+    CopyFileToDirectory(buildDir + File("Xamarin.Andoid.ParameterNameGenerator.targets"), outputDir);
 });
 
 Task("Package")
     .IsDependentOn("Build")
     .Does(() =>
 {
+    NuGetPack("./nuget/Xamarin.Android.Bindings.Generators.nuspec", new NuGetPackSettings {
+        BasePath = "./",
+        OutputDirectory = "./output/",
+    });
 });
 
 Task("Tests")

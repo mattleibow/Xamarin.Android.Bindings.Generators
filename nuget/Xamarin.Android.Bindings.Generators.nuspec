@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Xamarin.Android.Bindings.Generators</id>
+        <version>1.0.0.0</version>
+        <title>Xamarin.Android Binding Generators</title>
+        <authors>.NET Development Addict</authors>
+        <owners>mattleibow</owners>
+        <licenseUrl>https://raw.githubusercontent.com/mattleibow/Xamarin.Android.Bindings.Generators/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/mattleibow/Xamarin.Android.Bindings.Generators</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A MSBuild Task to make Xamarin.Android binding projects easier.</description>
+        <copyright>Copyright © .NET Development Addict 2016</copyright>
+    </metadata>
+    <files>
+        <file src="readme.md" target="lib\MonoAndroid\readme.md" />
+        
+        <file src="output/ParameterNameGeneratorTask.dll" target="build\MonoAndroid\ParameterNameGeneratorTask.dll" />
+        <file src="output/Xamarin.Android.Tools.Bytecode.dll" target="build\MonoAndroid\Xamarin.Android.Tools.Bytecode.dll" />
+        <file src="output/Ionic.Zip.dll" target="build\MonoAndroid\Ionic.Zip.dll" />
+        <file src="output/Xamarin.Andoid.ParameterNameGenerator.targets" target="build\MonoAndroid\Xamarin.Android.Bindings.Generators.targets" />
+    </files>
+</package>
