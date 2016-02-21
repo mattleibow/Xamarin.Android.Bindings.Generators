@@ -1,0 +1,12 @@
+version: 1.0.0.{build}
+os: Visual Studio 2015
+xamarin:
+  email: matthew.leibowitz@xamarin.com
+  password:
+    secure: Tvdf5rZl6IOCwZbvyj9B2w==
+  android: true
+build_script:
+- ps: .\build.ps1 -target CI -version $(APPVEYOR_BUILD_VERSION)
+artifacts:
+- path: ./output/
+- path: ./output/*.nupkg
