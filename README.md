@@ -23,4 +23,4 @@ Then, rebuild! That is all!
 into Xamarin.Android app projects.*
 
 [badge]: https://ci.appveyor.com/api/projects/status/ee9grjpxpb8dkc7v?svg=true
-[ci]: 
+[ci]: https://ci.appveyor.com/project/mattleibow/xamarin-android-bindings-generators
