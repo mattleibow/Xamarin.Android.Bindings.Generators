@@ -6,7 +6,7 @@ xamarin:
     secure: Tvdf5rZl6IOCwZbvyj9B2w==
   android: true
 build_script:
-- ps: .\build.ps1 -target CI -version $(APPVEYOR_BUILD_VERSION)
+- ps: .\build.ps1 -target CI -version $Env:APPVEYOR_BUILD_VERSION
 artifacts:
 - path: ./output/
 - path: ./output/*.nupkg
