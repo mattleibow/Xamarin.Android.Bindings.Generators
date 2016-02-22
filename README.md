@@ -1,6 +1,6 @@
 # Xamarin.Android Binding Generators
 
-[![Build status][badge]](ci)
+[![Build status][badge]][ci]
 
 A MSBuild Task to make Xamarin.Android binding projects easier.
 
