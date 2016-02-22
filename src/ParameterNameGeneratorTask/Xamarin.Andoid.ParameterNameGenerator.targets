@@ -18,8 +18,7 @@
                             TransformFiles="@(TransformFile)"
                             GeneratedFile="$(GeneratedParameterNamesFile)"
                             ApiOutputFile="$(ApiOutputFile)"
-                            ForceMeaningfulParameterNames="$(ForceMeaningfulParameterNames)"
-                            MSBuildArchitecture="x86" />
+                            ForceMeaningfulParameterNames="$(ForceMeaningfulParameterNames)" />
                             
     <ItemGroup>
       <!-- make sure the generated transform is first so the user can override values -->
