@@ -84,7 +84,7 @@ Task("Tests")
     NuGetRestore(testsSolutionFile);
     
     if (IsRunningOnWindows()) {
-        MSBuild(testsSolutionFile, s => s.SetConfiguration(configuration).SetMSBuildPlatform(MSBuildPlatform.x86));
+        MSBuild(testsSolutionFile, s => s.SetConfiguration(configuration));
     } else {
         XBuild(testsSolutionFile, s => s.SetConfiguration(configuration));
     }

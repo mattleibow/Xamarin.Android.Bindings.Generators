@@ -3,7 +3,7 @@
 
   <UsingTask TaskName="GenerateParameterNames"
              AssemblyFile="$(MSBuildThisFileDirectory)ParameterNameGeneratorTask.dll"
-             Architecture="x86" />
+             />
 
   <Target Name="GenerateParameterNames"
           BeforeTargets="GenerateBindings"
