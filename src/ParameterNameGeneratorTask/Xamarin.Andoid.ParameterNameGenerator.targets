@@ -14,6 +14,8 @@
       <ForceMeaningfulParameterNames Condition=" '$(ForceMeaningfulParameterNames)' == '' ">true</ForceMeaningfulParameterNames>
       <GeneratedReservedPrefix Condition=" '$(GeneratedReservedPrefix)' == '' "></GeneratedReservedPrefix>
       <GeneratedReservedSuffix Condition=" '$(GeneratedReservedSuffix)' == '' ">Param</GeneratedReservedSuffix>
+      <!-- Pascal, Camel, Original -->
+      <GeneratedParameterCasing Condition=" '$(GeneratedParameterCasing)' == '' ">Original</GeneratedParameterCasing>
     </PropertyGroup>
     
     <GenerateParameterNames SourceJars="@(EmbeddedJar);@(InputJar)"
@@ -22,6 +24,7 @@
                             ApiOutputFile="$(ApiOutputFile)"
                             ReservedPrefix="$(GeneratedReservedPrefix)"
                             ReservedSuffix="$(GeneratedReservedSuffix)"
+                            ParameterCasing="$(GeneratedParameterCasing)"
                             ForceMeaningfulParameterNames="$(ForceMeaningfulParameterNames)" />
                             
     <ItemGroup>

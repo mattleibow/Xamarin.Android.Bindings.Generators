@@ -46,6 +46,8 @@ namespace Tasks
 
 		public string ReservedSuffix { get; set; }
 
+		public string ParameterCasing { get; set; }
+
 		public bool ForceMeaningfulParameterNames { get; set; }
 
 		public override bool Execute()
@@ -55,6 +57,14 @@ namespace Tasks
 			Log.LogMessage("  GeneratedFile:  {0}", GeneratedFile);
 			Log.LogMessage("  SourceJars:     {0}", string.Join(";", SourceJars.Select(x => x.ItemSpec)));
 			Log.LogMessage("  TransformFiles: {0}", string.Join(";", TransformFiles.Select(x => x.ItemSpec)));
+
+			var generatorParameters = new GeneratorParameters
+			{
+				ReservedPrefix = ReservedPrefix ?? string.Empty,
+				ReservedSuffix = ReservedSuffix ?? string.Empty,
+				ParameterCasing = (TextCasing)Enum.Parse(typeof(TextCasing), ParameterCasing, true),
+				ForceMeaningfulParameterNames = ForceMeaningfulParameterNames
+			};
 
 			// create the folder
 			var dir = Path.GetDirectoryName(GeneratedFile.ItemSpec);
@@ -82,7 +92,7 @@ namespace Tasks
 			metadataElement = TransformXml(metadataElement);
 
 			var packages = JavaPackage.Parse(metadataElement);
-			var xParameters = packages.SelectMany(p => p.ToXElement(ForceMeaningfulParameterNames, ReservedPrefix ?? string.Empty, ReservedSuffix ?? string.Empty));
+			var xParameters = packages.SelectMany(p => p.ToXElement(generatorParameters));
 
 			// create the new xml document
 			var xDoc = new XDocument(
@@ -179,7 +189,7 @@ namespace Tasks
 					.ToArray();
 			}
 
-			public IEnumerable<XNode> ToXElement(bool forceMeaningfulParameterNames, string prefix, string suffix)
+			public IEnumerable<XNode> ToXElement(GeneratorParameters generatorParameters)
 			{
 				const string packagePathTemplate = "/api/package[@name='{0}']";
 				const string typePathTemplate = "/{0}[@name='{1}']";
@@ -201,7 +211,7 @@ namespace Tasks
 						foreach (var member in type.Members.Where(m => m.IsVisible && m.HasParameters))
 						{
 							// make sure the parameter names are valid and meaningful
-							member.EnsueValidAndUnique(forceMeaningfulParameterNames, prefix, suffix);
+							member.EnsueValidAndUnique(generatorParameters);
 
 							// build the member selection path bit of the parameter
 							var paramArray = new string[member.ParameterCount];
@@ -267,7 +277,7 @@ namespace Tasks
 			public int ParameterCount => Parameters.Length;
 			public bool HasParameters => Parameters != null && Parameters.Length > 0;
 
-			public void EnsueValidAndUnique(bool forceMeaningfulParameterNames, string prefix, string suffix)
+			public void EnsueValidAndUnique(GeneratorParameters generatorParameters)
 			{
 				var addedParamNames = new List<string>();
 				for (int idx = 0; idx < ParameterCount; idx++)
@@ -275,7 +285,7 @@ namespace Tasks
 					var parameter = Parameters[idx];
 					var managedName = parameter.Name;
 
-					if (forceMeaningfulParameterNames)
+					if (generatorParameters.ForceMeaningfulParameterNames)
 					{
 						// if the parameter name is generated, try harder
 						var isGenerated =
@@ -301,9 +311,20 @@ namespace Tasks
 					}
 
 					// fix any bad C# parameter names
+					if (generatorParameters.ParameterCasing != TextCasing.Original)
+					{
+						if (generatorParameters.ParameterCasing == TextCasing.Pascal)
+						{
+							managedName = char.ToUpper(managedName[0]) + string.Concat(managedName.Skip(1));
+						}
+						else if (generatorParameters.ParameterCasing == TextCasing.Camel)
+						{
+							managedName = char.ToLower(managedName[0]) + string.Concat(managedName.Skip(1));
+						}
+					}
 					if (ReservedWords.Contains(managedName))
 					{
-						managedName = prefix + managedName + suffix;
+						managedName = generatorParameters.ReservedPrefix + managedName + generatorParameters.ReservedSuffix;
 					}
 					//if (!managedName.StartsWith("@"))
 					//{
@@ -331,5 +352,23 @@ namespace Tasks
 
 			public string ManagedName { get; set; }
 		}
+	}
+
+	public enum TextCasing
+	{
+		Original,
+		Pascal,
+		Camel
+	}
+
+	public class GeneratorParameters
+	{
+		public string ReservedPrefix { get; set; }
+
+		public string ReservedSuffix { get; set; }
+
+		public TextCasing ParameterCasing { get; set; }
+
+		public bool ForceMeaningfulParameterNames { get; set; }
 	}
 }
