@@ -13,6 +13,24 @@ namespace Tasks
 {
 	public class GenerateParameterNames : Task
 	{
+		public readonly static string[] ReservedWords = new[]
+		{
+			// C# Keywords
+			"abstract","as","base","bool","break","byte","case","catch","char","checked","class",
+			"const","continue","decimal","default","delegate","do","double","else","enum","event",
+			"explicit","extern","false","finally","fixed","float","for","foreach","goto","if","implicit",
+			"in","int","interface","internal","is","lock","long","namespace","new","null","object","operator",
+			"out","override","params","private","protected","public","readonly","ref","return","sbyte",
+			"sealed","short","sizeof","stackalloc","static","string","struct","switch","this","throw",
+			"true","try","typeof","uint","ulong","unchecked","unsafe","ushort","using","virtual",
+			"void","volatile","while",
+
+			// C# Contextuals Keywords
+			"add","alias","ascending","async","await","descending","dynamic","from","get","global",
+			"group","into","join","let","orderby","partial","remove","select","set","value","var",
+			"where","yield",
+		};
+
 		[Required]
 		public ITaskItem[] SourceJars { get; set; }
 
@@ -23,6 +41,10 @@ namespace Tasks
 		public ITaskItem GeneratedFile { get; set; }
 
 		public ITaskItem ApiOutputFile { get; set; }
+
+		public string ReservedPrefix { get; set; }
+
+		public string ReservedSuffix { get; set; }
 
 		public bool ForceMeaningfulParameterNames { get; set; }
 
@@ -60,7 +82,7 @@ namespace Tasks
 			metadataElement = TransformXml(metadataElement);
 
 			var packages = JavaPackage.Parse(metadataElement);
-			var xParameters = packages.SelectMany(p => p.ToXElement(ForceMeaningfulParameterNames));
+			var xParameters = packages.SelectMany(p => p.ToXElement(ForceMeaningfulParameterNames, ReservedPrefix ?? string.Empty, ReservedSuffix ?? string.Empty));
 
 			// create the new xml document
 			var xDoc = new XDocument(
@@ -157,7 +179,7 @@ namespace Tasks
 					.ToArray();
 			}
 
-			public IEnumerable<XNode> ToXElement(bool forceMeaningfulParameterNames)
+			public IEnumerable<XNode> ToXElement(bool forceMeaningfulParameterNames, string prefix, string suffix)
 			{
 				const string packagePathTemplate = "/api/package[@name='{0}']";
 				const string typePathTemplate = "/{0}[@name='{1}']";
@@ -179,7 +201,7 @@ namespace Tasks
 						foreach (var member in type.Members.Where(m => m.IsVisible && m.HasParameters))
 						{
 							// make sure the parameter names are valid and meaningful
-							member.EnsueValidAndUnique(forceMeaningfulParameterNames);
+							member.EnsueValidAndUnique(forceMeaningfulParameterNames, prefix, suffix);
 
 							// build the member selection path bit of the parameter
 							var paramArray = new string[member.ParameterCount];
@@ -245,7 +267,7 @@ namespace Tasks
 			public int ParameterCount => Parameters.Length;
 			public bool HasParameters => Parameters != null && Parameters.Length > 0;
 
-			public void EnsueValidAndUnique(bool forceMeaningfulParameterNames)
+			public void EnsueValidAndUnique(bool forceMeaningfulParameterNames, string prefix, string suffix)
 			{
 				var addedParamNames = new List<string>();
 				for (int idx = 0; idx < ParameterCount; idx++)
@@ -279,10 +301,14 @@ namespace Tasks
 					}
 
 					// fix any bad C# parameter names
-					if (!managedName.StartsWith("@"))
+					if (ReservedWords.Contains(managedName))
 					{
-						managedName = "@" + managedName;
+						managedName = prefix + managedName + suffix;
 					}
+					//if (!managedName.StartsWith("@"))
+					//{
+					//	managedName = "@" + managedName;
+					//}
 
 					// make sure the name is unique for this method
 					var tmpName = managedName;

@@ -12,12 +12,16 @@
     <PropertyGroup>
       <GeneratedParameterNamesFile Condition=" '$(GeneratedParameterNamesFile)' == '' ">$(IntermediateOutputPath)Metadata.GeneratedParameterNames.xml</GeneratedParameterNamesFile>
       <ForceMeaningfulParameterNames Condition=" '$(ForceMeaningfulParameterNames)' == '' ">true</ForceMeaningfulParameterNames>
+      <GeneratedReservedPrefix Condition=" '$(GeneratedReservedPrefix)' == '' "></GeneratedReservedPrefix>
+      <GeneratedReservedSuffix Condition=" '$(GeneratedReservedSuffix)' == '' ">Param</GeneratedReservedSuffix>
     </PropertyGroup>
     
     <GenerateParameterNames SourceJars="@(EmbeddedJar);@(InputJar)"
                             TransformFiles="@(TransformFile)"
                             GeneratedFile="$(GeneratedParameterNamesFile)"
                             ApiOutputFile="$(ApiOutputFile)"
+                            ReservedPrefix="$(GeneratedReservedPrefix)"
+                            ReservedSuffix="$(GeneratedReservedSuffix)"
                             ForceMeaningfulParameterNames="$(ForceMeaningfulParameterNames)" />
                             
     <ItemGroup>
